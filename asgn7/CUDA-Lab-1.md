@@ -154,9 +154,10 @@ Write here the GPU kernel function
 // #include <helper_cuda.h>
 
 __global__ void HelloWorld(){
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	printf("i = %d, thread %d, block %d", i, threadIdx.x, blockIdx.x);
 	printf("Hello World\n");
+	
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	printf("i = %d, thread %d, block %d\n", i, threadIdx.x, blockIdx.x);
 }
 
 int main(void){
