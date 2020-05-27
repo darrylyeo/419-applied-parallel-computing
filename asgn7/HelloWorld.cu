@@ -3,7 +3,7 @@
 // #include <helper_cuda.h>
 
 __global__ void HelloWorld(){
-	printf("Hello World");
+	printf("Hello World\n");
 }
 
 int main(void){
