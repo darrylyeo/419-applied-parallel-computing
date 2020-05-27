@@ -47,9 +47,6 @@ cudaDeviceSynchronize();
 * A call to cudaDeviceSynchronize, a function provided by the CUDA runtime, will cause the host (CPU) code to wait until the device (GPU) code completes, and only then resume execution on the CPU.
 
 
-
-
-
 ## Exercise: Hello GPU Kernel
 
 	nvcc -o hello-gpu 01-hello/01-hello-gpu.cu -run
@@ -99,6 +96,7 @@ Thus, under the assumption that a kernel called someKernel has been defined, the
 * someKernel<<<10, 1>>() is configured to run in 10 thread blocks which each have a single thread and will therefore run 10 times.
 * someKernel<<<10, 10>>() is configured to run in 10 thread blocks which each have 10 threads and will therefore run 100 times.
 
+
 ## Exercise: Launch Parallel Kernels
 
 Follow the steps below to refactor HelloWorld to run on the GPU to:
@@ -137,9 +135,11 @@ int main(void){
 }
 ```
 
+
 ## Thread and Block Indices
 Each thread is given an index within its thread block, starting at 0. Additionally, each block is given an index, starting at 0. Just as threads are grouped into thread blocks, blocks are grouped into a grid, which is the highest entity in the CUDA thread hierarchy. In summary, CUDA kernels are executed in a grid of 1 or more blocks, with each block containing the same number of 1 or more threads.
 CUDA kernels have access to special variables identifying both the index of the thread (within the block) that is executing the kernel, and, the index of the block (within the grid) that the thread is within. These variables are threadIdx.x and blockIdx.x respectively.
+
 
 ## Exercise: Launch Parallel Kernel:
 * Refactor the HelloWorld kernel print the threadID and BlockID, execute in parallel on 5 threads, all executing in a single thread block.
@@ -185,9 +185,9 @@ int main(void){
 
 	nvcc  -o basic-parallel HelloWorld.cu -run
 
+
 ## Accelerating For Loops
 For loops in CPU-only applications are ripe for acceleration: rather than run each iteration of the loop serially, each iteration of the loop can be run in parallel in its own thread. Consider the following for loop, and notice, though it is obvious, that it controls how many times the loop will execute, as well as defining what will happen for each iteration of the loop:
-
 
 ```c
 int N = 2<<20;
@@ -199,7 +199,6 @@ for (int i = 0; i < N; ++i){
 In order to parallelize this loop, 2 steps must be taken:
 * A kernel must be written to do the work of a single iteration of the loop.
 * Because the kernel will be agnostic of other running kernels, the execution configuration must be such that the kernel executes the correct number of times, for example, the number of times the loop would have iterated.
-
 
 
 ## Exercise: Accelerating a For Loop with a Single Block of Threads
@@ -240,7 +239,6 @@ int main(void){
 ```
 
 
-
 ## Using Block Dimensions for More Parallelization
 There is a limit to the number of threads that can exist in a thread block: 1024 to be precise. In order to increase the amount of parallelism in accelerated applications, we must be able to coordinate among multiple thread blocks.
 CUDA Kernels have access to a special variable that gives the number of threads in a block: blockDim.x. Using this variable, in conjunction with blockIdx.x and threadIdx.x, increased parallelization can be accomplished by organizing parallel execution accross multiple blocks of multiple threads with the idiomatic expression threadIdx.x + blockIdx.x * blockDim.x. Here is a detailed example.
@@ -250,6 +248,7 @@ The execution configuration <<<10, 10>>> would launch a grid with a total of 100
 * If block blockIdx.x equals 5, then blockIdx.x * blockDim.x is 50. Adding to 50 the possible threadIdx.x values 0 through 9, then we can generate the indices 50 through 59 within the 100 thread grid.
 * If block blockIdx.x equals 9, then blockIdx.x * blockDim.x is 90. Adding to 90 the possible threadIdx.x values 0 through 9, then we can generate the indices 90 through 99 within the 100 thread grid.
 
+
 ## Exercise: Accelerating a For Loop with Multiple Blocks of Threads
 
 Currently, the loop function inside runs a for loop that will serially print the numbers 0 through 9. Refactor the loop function to be a CUDA kernel which will launch to execute N iterations in parallel. After successfully refactoring, the numbers 0 through 9 should still be printed. For this exercise, as an additional constraint, use an execution configuration that launches at least 2 blocks of threads.
@@ -257,9 +256,34 @@ Currently, the loop function inside runs a for loop that will serially print the
 Write here the GPU kernel function
 
 ```c
+#include <stdio.h>
+#include <cuda_runtime.h>
+// #include <helper_cuda.h>
 
+#define N 10
+#define THREADS_PER_BLOCK 3
+
+__global__ void SingleBlockLoop(){
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if(i < N)
+		printf("%d\n", i);
+}
+
+int main(void){
+	cudaError_t err = cudaSuccess;
+
+	SingleBlockLoop<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>();
+	
+	if ((err = cudaGetLastError()) != cudaSuccess){
+		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
+		exit(EXIT_FAILURE);
+	}
+
+	cudaDeviceSynchronize();
+	
+	return 0;
+}
 ```
-
 
 
 ## Allocating Memory to be accessed on the GPU and the CPU
@@ -285,13 +309,50 @@ cudaFree(a);
 ```
 
 
-
-
 ## Exercise: Array Manipulation on both the Host and Device
 Program allocates an array, initializes it with integer values on the host, attempts to double each of these values in parallel on the GPU, and then confirms whether or not the doubling operations were successful, on the host.
 Write here the GPU kernel function and the Memory Allocation Part of Host code
 
 ```c
+#include <stdio.h>
+#include <cuda_runtime.h>
+// #include <helper_cuda.h>
+
+#define N 20
+
+__global__ void double(int *a){
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if(i < N)
+		a[i] *= 2;
+}
+
+int main(void){
+	cudaError_t err = cudaSuccess;
+
+	size_t size = N * sizeof(int);
+	int *a;
+	cudaMallocManaged(&a, size); // Use `a` on the CPU and/or on any GPU in the accelerated system.
+
+	for(int i = 0; i < N; i++)
+		a[i] = i;
+
+	double<<<2,10>>>(&a);
+
+	for(int i = 0; i < N; i++)
+		print("%d ", a[i]);
+	print("\n");
+	
+	cudaFree(a);
+	
+	if ((err = cudaGetLastError()) != cudaSuccess){
+		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
+		exit(EXIT_FAILURE);
+	}
+
+	cudaDeviceSynchronize();
+	
+	return 0;
+}
 ```
 
 
@@ -318,7 +379,6 @@ some_kernel<<<number_of_blocks, threads_per_block>>>(N);
 ```
 
 
-
 Because the execution configuration above results in more threads in the grid than N, care will need to be taken inside of the some_kernel definition so that some_kernel does not attempt to access out of range data elements, when being executed by one of the "extra" threads:
 
 ```c
@@ -339,6 +399,7 @@ __global__ some_kernel(int N){
 Write here the GPU kernel function
 
 ```c
+
 ```
 
 
@@ -375,7 +436,6 @@ __global void kernel(int *a, int N)
 ```
 
 
-
 ## Exercise: Use a Grid-Stride Loop to Manipulate an Array Larger than the Grid
 
 Refactor the doubleElements kernel, in order that the grid, which is smaller than N, can reuse threads to cover every element in the array. The program will print whether or not every element in the array has been doubled, currently the program accurately prints FALSE.
@@ -385,9 +445,7 @@ Write here the GPU kernel function and the Memory Allocation Part of Host code
 ```c
 ```
 
-
-
-Error Handling
+## Error Handling
 As in any application, error handling in accelerated CUDA code is essential.
 
 ```c
@@ -399,7 +457,6 @@ if (err != cudaSuccess)                             // `cudaSuccess` is provided
 	printf("Error: %s\n", cudaGetErrorString(err)); // `cudaGetErrorString` is provided by CUDA.
 }
 ```
-
 
 Launching kernels, which are defined to return void, do not return a value of type cudaError_t. To check for errors occuring at the time of a kernel launch, for example if the launch configuration is erroneous, CUDA provides the cudaGetLastError function, which does return a value of type cudaError_t.
 
@@ -416,6 +473,7 @@ if (err != cudaSuccess)
 
 
 Finally, in order to catch errors that occur asynchronously, for example during the execution of an asynchronous kernel, it is essential to check the error returned by cudaDeviceSynchronize, which will return an error if one of the kernel executions it is synchronizing on should fail.
+
 
 ## CUDA Error Handling Macro
 
