@@ -3,3 +3,6 @@ CFLAGS = -run
 
 HelloWorld: $(OBJS)
 	$(CC) $(CFLAGS) -o HelloWorld HelloWorld.cu
+
+HelloWorldBlockThread: $(OBJS)
+	$(CC) $(CFLAGS) -o HelloWorldBlockThread HelloWorldBlockThread.cu
