@@ -1,4 +1,4 @@
-CC = nvcc
+CC = /usr/local/cuda-9.0/bin/nvcc
 CFLAGS = -run
 
 HelloWorld: $(OBJS)
