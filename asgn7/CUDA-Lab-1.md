@@ -336,7 +336,7 @@ int main(void){
 	for(int i = 0; i < N; i++)
 		a[i] = i;
 
-	doubleArray<<<2,10>>>(&a);
+	doubleArray<<<2,10>>>(a);
 
 	for(int i = 0; i < N; i++)
 		printf("%d ", a[i]);
