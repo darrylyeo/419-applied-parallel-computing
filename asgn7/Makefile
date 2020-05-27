@@ -1,5 +1,6 @@
 CC = /usr/local/cuda-9.0/bin/nvcc
 CFLAGS = -run
+PROF = /usr/local/cuda-9.0/bin/nvprof
 
 clean:
 	rm HelloWorld HelloWorldBlockThread SingleBlockLoop ArrayManipulation ArrayCheckRange ArrayManipulationGridStride 01-vector-add 01-matrix-multiply
@@ -31,7 +32,7 @@ ArrayManipulationGridStride: $(OBJS)
 	$(CC) $(CFLAGS) -o 01-matrix-multiply 01-matrix-multiply.cu
 
 nvprof-vector-add: 01-vector-add
-	nvprof ./01-vector-add
+	$(PROF) ./01-vector-add
 
 nvprof-matrix-multiply: 01-matrix-multiply
-	nvprof ./01-matrix-multiply
+	$(PROF) ./01-matrix-multiply
