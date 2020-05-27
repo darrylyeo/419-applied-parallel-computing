@@ -2,9 +2,7 @@
 #include <cuda_runtime.h>
 // #include <helper_cuda.h>
 
-int N = 1000;
-size_t threads_per_block = 256;
-size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
+#define N 1000
 
 __global__ void initializeElementsTo(int *a, int *value){
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
@@ -20,6 +18,8 @@ int main(void){
 	int *a;
 	cudaMallocManaged(&a, size);
 
+	size_t threads_per_block = 256;
+	size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
 	initializeElementsTo<<<number_of_blocks, threads_per_block>>>(a, 123);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
