@@ -42,6 +42,8 @@ int main(void){
 	printf("Done\n");
 	
 	cudaFree(a);
+	cudaFree(b);
+	cudaFree(c);
 	
 	return 0;
 }
