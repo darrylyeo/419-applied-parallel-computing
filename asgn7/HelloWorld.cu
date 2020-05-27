@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
-#include <helper_cuda.h>
+// #include <helper_cuda.h>
 
 __global__ void HelloWorld(){
 	printf("Hello World");
