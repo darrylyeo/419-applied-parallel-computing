@@ -2,7 +2,8 @@ CC = /usr/local/cuda-9.0/bin/nvcc
 CFLAGS = -run
 
 clean:
-	rm HelloWorld HelloWorldBlockThread SingleBlockLoop ArrayManipulation ArrayCheckRange ArrayManipulationGridStride
+	rm HelloWorld HelloWorldBlockThread SingleBlockLoop ArrayManipulation ArrayCheckRange ArrayManipulationGridStride 01-vector-add 01-matrix-multiply
+
 
 HelloWorld: $(OBJS)
 	$(CC) $(CFLAGS) -o HelloWorld HelloWorld.cu
@@ -21,3 +22,10 @@ ArrayCheckRange: $(OBJS)
 
 ArrayManipulationGridStride: $(OBJS)
 	$(CC) $(CFLAGS) -o ArrayManipulationGridStride ArrayManipulationGridStride.cu
+
+
+01-vector-add: $(OBJS)
+	$(CC) $(CFLAGS) -o 01-vector-add 01-vector-add.cu
+
+01-matrix-multiply: $(OBJS)
+	$(CC) $(CFLAGS) -o 01-matrix-multiply 01-matrix-multiply.cu
