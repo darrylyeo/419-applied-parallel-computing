@@ -5,9 +5,9 @@
 #define THREADS_PER_BLOCK 32
 
 __global__ void multiplyMatrices(int *a, int *b, int *c, int m, int n, int k){
-	int row = blockIdx.y * blockDim.y + threadIdx.y; 
 	int col = blockIdx.x * blockDim.x + threadIdx.x;
-	if(col < k && row < m){
+	int row = blockIdx.y * blockDim.y + threadIdx.y; 
+	if(row < m && col < k){
 		int sum = 0;
 		for(int i = 0; i < n; i++)
 			sum += a[row * n + i] * b[i * k + col];
