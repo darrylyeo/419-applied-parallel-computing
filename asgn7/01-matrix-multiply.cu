@@ -5,15 +5,14 @@
 #define THREADS_PER_BLOCK 32
 
 __global__ void multiplyMatrices(int *a, int *b, int *c, int m, int n, int k){
-	int col = blockIdx.x * blockDim.x + threadIdx.x;
-	int row = blockIdx.y * blockDim.y + threadIdx.y; 
-	if(row < m && col < k){
-		int sum = 0;
-		for(int i = 0; i < n; i++)
-			sum += a[row * n + i] * b[i * k + col];
-		c[row * k + col] = sum;
-	}
-} 
+	for (int col = blockIdx.x * blockDim.x + threadIdx.x; col < k; col += gridDim.x * blockDim.x)
+		for (int row = blockIdx.y * blockDim.y + threadIdx.y; row < m; row += gridDim.y * blockDim.y){
+			int sum = 0;
+			for(int i = 0; i < n; i++)
+				sum += a[row * n + i] * b[i * k + col];
+			c[row * k + col] = sum;
+		}
+}
 
 int main(void){
 	cudaError_t err = cudaSuccess;
