@@ -59,7 +59,7 @@ int main(void){
 
 	for(int i = 0; i < m; i++){
 		for(int j = 0; j < k; j++)
-			printf("%d ", c[i * k + j];
+			printf("%d ", c[i * k + j]);
 		printf("\n");
 	}
 
