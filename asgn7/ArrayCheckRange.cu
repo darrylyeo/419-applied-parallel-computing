@@ -6,7 +6,7 @@ int N = 1000;
 size_t threads_per_block = 256;
 size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
 
-__global__ initializeElementsTo(int *a, int *value){
+__global__ void initializeElementsTo(int *a, int *value){
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if (i < N)
@@ -34,6 +34,7 @@ int main(void){
 			printf("Failed\n");
 			break;
 		}
+	printf("Done\n");
 	
 	cudaFree(a);
 	
