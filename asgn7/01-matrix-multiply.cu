@@ -22,7 +22,7 @@ int main(void){
 	// b: n x k
 	// c: m x k
 	int *a, *b, *c;
-	int m = 1000, n = 1000, k = 1000;
+	int m = 2000000, n = 2000000, k = 2000000;
 
 	cudaMallocManaged(&a, sizeof(int) * m * n);
 	cudaMallocManaged(&b, sizeof(int) * n * k);
