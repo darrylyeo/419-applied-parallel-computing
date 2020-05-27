@@ -21,12 +21,6 @@ int main(void){
 		a[i] = i;
 
 	doubleArray<<<2,10>>>(a);
-
-	for(int i = 0; i < N; i++)
-		printf("%d ", a[i]);
-	printf("\n");
-	
-	cudaFree(a);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
@@ -34,6 +28,12 @@ int main(void){
 	}
 
 	cudaDeviceSynchronize();
+
+	for(int i = 0; i < N; i++)
+		printf("%d ", a[i]);
+	printf("\n");
+	
+	cudaFree(a);
 	
 	return 0;
 }
