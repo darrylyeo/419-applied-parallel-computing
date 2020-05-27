@@ -2,13 +2,12 @@
 #include <cuda_runtime.h>
 // #include <helper_cuda.h>
 
-#define N 1000
+#define N 20
 
-__global__ void initializeElementsTo(int *a, int *value){
-	int i = threadIdx.x + blockIdx.x * blockDim.x;
-
-	if (i < N)
-		a[value] = *value;
+__global__ void doubleArray(int *a){
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if(i < N)
+		a[i] *= 2;
 }
 
 int main(void){
@@ -16,11 +15,12 @@ int main(void){
 
 	size_t size = N * sizeof(int);
 	int *a;
-	cudaMallocManaged(&a, size);
+	cudaMallocManaged(&a, size); // Use `a` on the CPU and/or on any GPU in the accelerated system.
 
-	size_t threads_per_block = 256;
-	size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
-	initializeElementsTo<<<number_of_blocks, threads_per_block>>>(a, 123);
+	for(int i = 0; i < N; i++)
+		a[i] = i;
+
+	doubleArray<<<2,10>>>(a);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
@@ -30,11 +30,8 @@ int main(void){
 	cudaDeviceSynchronize();
 
 	for(int i = 0; i < N; i++)
-		if(a[i] != 123){
-			printf("Failed\n");
-			break;
-		}
-	printf("Done\n");
+		printf("%d ", a[i]);
+	printf("\n");
 	
 	cudaFree(a);
 	

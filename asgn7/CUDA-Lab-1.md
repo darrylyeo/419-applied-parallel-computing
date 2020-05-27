@@ -411,11 +411,11 @@ Update the initializeElementsTo kernel to make sure that it does not attempt to 
 
 #define N 1000
 
-__global__ void initializeElementsTo(int *a, int *value){
+__global__ void initializeElementsTo(int *a, int value){
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if (i < N)
-		a[value] = *value;
+		a[value] = value;
 }
 
 int main(void){
