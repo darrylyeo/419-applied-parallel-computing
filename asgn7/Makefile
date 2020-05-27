@@ -20,4 +20,4 @@ ArrayCheckRange: $(OBJS)
 	$(CC) $(CFLAGS) -o ArrayCheckRange ArrayCheckRange.cu
 
 ArrayManipulationGridStride: $(OBJS)
-	$(CC) $(CFLAGS) -o ArrayManipulation ArrayManipulation.cu
+	$(CC) $(CFLAGS) -o ArrayManipulationGridStride ArrayManipulationGridStride.cu
