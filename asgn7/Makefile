@@ -1,5 +1,5 @@
 CC = nvcc
-CFLAGS = -Wall -ansi -g -openmp
+CFLAGS = -run
 
 HelloWorld: $(OBJS)
-	$(CC) $(CFLAGS) -o HelloWorld HelloWorld.cu
+	$(CC) $(CFLAGS) -o HelloWorld HelloWorld.c
