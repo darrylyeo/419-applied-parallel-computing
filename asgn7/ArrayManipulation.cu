@@ -23,8 +23,8 @@ int main(void){
 	doubleArray<<<2,10>>>(&a);
 
 	for(int i = 0; i < N; i++)
-		print("%d ", a[i]);
-	print("\n");
+		printf("%d ", a[i]);
+	printf("\n");
 	
 	cudaFree(a);
 	

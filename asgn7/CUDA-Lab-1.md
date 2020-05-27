@@ -320,7 +320,7 @@ Write here the GPU kernel function and the Memory Allocation Part of Host code
 
 #define N 20
 
-__global__ void double(int *a){
+__global__ void doubleArray(int *a){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N)
 		a[i] *= 2;
@@ -336,11 +336,11 @@ int main(void){
 	for(int i = 0; i < N; i++)
 		a[i] = i;
 
-	double<<<2,10>>>(&a);
+	doubleArray<<<2,10>>>(&a);
 
 	for(int i = 0; i < N; i++)
-		print("%d ", a[i]);
-	print("\n");
+		printf("%d ", a[i]);
+	printf("\n");
 	
 	cudaFree(a);
 	
