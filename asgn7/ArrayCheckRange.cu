@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <cuda_runtime.h>
+// #include <helper_cuda.h>
+
 int N = 1000;
 size_t threads_per_block = 256;
 size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
