@@ -225,7 +225,7 @@ __global__ void SingleBlockLoop(){
 int main(void){
 	cudaError_t err = cudaSuccess;
 
-	SingleBlockLoop<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, N>>>();
+	SingleBlockLoop<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>();
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
