@@ -29,3 +29,9 @@ ArrayManipulationGridStride: $(OBJS)
 
 01-matrix-multiply: $(OBJS)
 	$(CC) $(CFLAGS) -o 01-matrix-multiply 01-matrix-multiply.cu
+
+nvprof-vector-add: 01-vector-add
+	nvprof ./01-vector-add
+
+nvprof-matrix-multiply: 01-matrix-multiply
+	nvprof ./01-matrix-multiply
