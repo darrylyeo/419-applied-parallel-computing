@@ -2,24 +2,18 @@
 #include <cuda_runtime.h>
 // #include <helper_cuda.h>
 
-__global__ void HelloWorld(){
-	printf("Hello World\n");
-	
+#define N 1024
+#define THREADS_PER_BLOCK 32
+
+__global__ void SingleBlockLoop(){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	printf("i = %d, thread %d, block %d\n", i, threadIdx.x, blockIdx.x);
+	printf("%d", i);
 }
 
 int main(void){
 	cudaError_t err = cudaSuccess;
 
-	printf("HelloWorld<<<1,5>>>();");
-	HelloWorld<<<1,5>>>();
-
-	printf("HelloWorld<<<5,5>>>();");
-	HelloWorld<<<2,5>>>();
-
-	printf("HelloWorld<<<5,5>>>();");
-	HelloWorld<<<2,5>>>();
+	SingleBlockLoop<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK), N>>>();
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));

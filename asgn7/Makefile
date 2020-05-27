@@ -9,3 +9,6 @@ HelloWorld: $(OBJS)
 
 HelloWorldBlockThread: $(OBJS)
 	$(CC) $(CFLAGS) -o HelloWorldBlockThread HelloWorldBlockThread.cu
+
+SingleBlockLoop: $(OBJS)
+	$(CC) $(CFLAGS) -o SingleBlockLoop SingleBlockLoop.cu
