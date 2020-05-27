@@ -35,6 +35,10 @@ int main(void){
 
 	cudaDeviceSynchronize();
 
+	for(int i = 0; i < N; i++)
+		printf("%d ", c[i];
+	printf("\n");
+
 	printf("Done\n");
 	
 	cudaFree(a);

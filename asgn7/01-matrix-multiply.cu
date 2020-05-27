@@ -32,8 +32,8 @@ int main(void){
 		for(int j = 0; j < n; j++)
 			a[i * n + j] = rand() % 10;
 
-	for(int i = 0; i < n; ++i)
-		for(int j = 0; j < k; ++j)
+	for(int i = 0; i < n; i++)
+		for(int j = 0; j < k; j++)
 			b[i * k + j] = rand() % 10;
 	
 	multiplyMatrices<<<
@@ -56,6 +56,12 @@ int main(void){
 	}
 
 	cudaDeviceSynchronize();
+
+	for(int i = 0; i < m; i++){
+		for(int j = 0; j < k; j++)
+			printf("%d ", c[i * k + j];
+		printf("\n");
+	}
 
 	printf("Done\n");
 	
