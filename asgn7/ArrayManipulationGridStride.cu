@@ -2,11 +2,10 @@
 #include <cuda_runtime.h>
 // #include <helper_cuda.h>
 
-#define N 20
+#define N 1000000
 
 __global__ void doubleElements(int *a){
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if(i < N)
+	for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < N; i += gridDim.x * blockDim.x)
 		a[i] *= 2;
 }
 
@@ -20,7 +19,9 @@ int main(void){
 	for(int i = 0; i < N; i++)
 		a[i] = i;
 
-	doubleElements<<<2,10>>>(a);
+	size_t threads_per_block = 256;
+	size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
+	doubleElements<<<number_of_blocks, threads_per_block>>>(a);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
@@ -30,8 +31,11 @@ int main(void){
 	cudaDeviceSynchronize();
 
 	for(int i = 0; i < N; i++)
-		printf("%d ", a[i]);
-	printf("\n");
+		if(a[i] != i * 2){
+			printf("Failed\n");
+			break;
+		}
+	printf("Done\n");
 	
 	cudaFree(a);
 	
