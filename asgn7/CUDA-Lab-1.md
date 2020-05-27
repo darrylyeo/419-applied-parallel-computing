@@ -357,8 +357,11 @@ int main(void){
 
 
 ## Handling Block Configuration Mismatches to Number of Needed Threads
+
 It may be the case that an execution configuration cannot be expressed that will create the exact number of threads needed for parallelizing a loop.
+
 A common example has to do with the desire to choose optimal block sizes. For example, due to GPU hardware traits, blocks that contain a number of threads that are a multiple of 32 are often desirable for performance benefits. Assuming that we wanted to launch blocks each containing 256 threads (a multiple of 32), and needed to run 1000 parallel tasks (a trivially small number for ease of explanation), then there is no number of blocks that would produce an exact total of 1000 threads in the grid, since there is no integer value 32 can be multiplied by to equal exactly 1000.
+
 This scenario can be easily addressed in the following way:
 * Write an execution configuration that creates more threads than necessary to perform the allotted work.
 * Pass a value as an argument into the kernel that represents the N number of times the kernel ought to run.
@@ -378,7 +381,6 @@ size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
 some_kernel<<<number_of_blocks, threads_per_block>>>(N);
 ```
 
-
 Because the execution configuration above results in more threads in the grid than N, care will need to be taken inside of the some_kernel definition so that some_kernel does not attempt to access out of range data elements, when being executed by one of the "extra" threads:
 
 ```c
@@ -394,19 +396,52 @@ __global__ some_kernel(int N){
 
 
 ## Exercise: Accelerating a For Loop with a Mismatched Execution Configuration
+
 * Assign a value to number_of_blocks that will make sure there are at least as many threads as there are elements in a to work on.
 
 Write here the GPU kernel function
-
-```c
-
-```
-
 
 Update the initializeElementsTo kernel to make sure that it does not attempt to work on data elements that are out of range.
 
 
 ```c
+int N = 1000;
+size_t threads_per_block = 256;
+size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
+
+__global__ initializeElementsTo(int *a, int *value){
+	int i = threadIdx.x + blockIdx.x * blockDim.x;
+
+	if (i < N)
+		a[value] = *value;
+}
+
+int main(void){
+	cudaError_t err = cudaSuccess;
+
+	size_t size = N * sizeof(int);
+	int *a;
+	cudaMallocManaged(&a, size);
+
+	initializeElementsTo<<<number_of_blocks, threads_per_block>>>(a, 123);
+	
+	if ((err = cudaGetLastError()) != cudaSuccess){
+		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
+		exit(EXIT_FAILURE);
+	}
+
+	cudaDeviceSynchronize();
+
+	for(int i = 0; i < N; i++)
+		if(a[i] != 123){
+			printf("Failed\n");
+			break;
+		}
+	
+	cudaFree(a);
+	
+	return 0;
+}
 ```
 
 

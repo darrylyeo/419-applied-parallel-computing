@@ -2,7 +2,7 @@ CC = /usr/local/cuda-9.0/bin/nvcc
 CFLAGS = -run
 
 clean:
-	rm HelloWorld HelloWorldBlockThread SingleBlockLoop ArrayManipulation
+	rm HelloWorld HelloWorldBlockThread SingleBlockLoop ArrayManipulation ArrayCheckRange
 
 HelloWorld: $(OBJS)
 	$(CC) $(CFLAGS) -o HelloWorld HelloWorld.cu
@@ -15,3 +15,6 @@ SingleBlockLoop: $(OBJS)
 
 ArrayManipulation: $(OBJS)
 	$(CC) $(CFLAGS) -o ArrayManipulation ArrayManipulation.cu
+
+ArrayCheckRange: $(OBJS)
+	$(CC) $(CFLAGS) -o ArrayCheckRange ArrayCheckRange.cu
