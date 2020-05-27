@@ -7,7 +7,8 @@
 
 __global__ void SingleBlockLoop(){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	printf("%d\n", i);
+	if(i < N)
+		printf("%d\n", i);
 }
 
 int main(void){
