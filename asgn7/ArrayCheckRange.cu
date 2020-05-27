@@ -8,7 +8,7 @@ __global__ void initializeElementsTo(int *a, int value){
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if (i < N)
-		a[value] = value;
+		a[i] = value;
 }
 
 int main(void){
