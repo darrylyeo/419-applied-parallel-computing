@@ -16,7 +16,7 @@ double integrate(char *buffer, double start, double end, int div, double (*f) (d
 	int N = div;
 	double step = (end - start) / div;
 
-	cudaMallocManaged(&buffer, sizeof(int) * N);
+	cudaMallocManaged(buffer, sizeof(int) * N);
 	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, start, step, N, f);
 
 	double result = (f(start) + f(end)) / 2;
@@ -34,7 +34,7 @@ int main(void){
 
 	char *buffer;
 
-	double result = integrate(0, 10, 0.1, f);
+	double result = integrate(buffer, 0, 10, 0.1, f);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
