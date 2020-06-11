@@ -32,7 +32,7 @@ double f(double x){
 int main(void){
 	cudaError_t err = cudaSuccess;
 
-	char *buffer;
+	char *buffer = NULL;
 
 	double result = integrate(buffer, 0, 10, 0.1, f);
 	
