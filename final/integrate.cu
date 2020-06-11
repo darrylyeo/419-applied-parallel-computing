@@ -25,13 +25,13 @@ double integrate(double start, double end, int div, double (*f) (double)){
 }
 
 double f(double x){
-	return x;
+	return x*x;
 }
 
 int main(void){
 	cudaError_t err = cudaSuccess;
 
-	integrate(st, en, div, f);
+	integrate(0, 10, 0.1, f);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
