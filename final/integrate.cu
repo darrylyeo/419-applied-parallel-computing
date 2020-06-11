@@ -13,7 +13,7 @@ __global__ void calculate(char *buffer, double start, double step, int N, double
 }
 
 double integrate(char *buffer, double start, double end, int div, double (*f) (double)){
-	int N = div;
+	unsigned long N = (unsigned long) div;
 	double step = (end - start) / div;
 
 	cudaMallocManaged(buffer, sizeof(int) * N);
