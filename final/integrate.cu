@@ -4,24 +4,26 @@
 
 #define THREADS_PER_BLOCK 3
 
-__global__ void calculate(char *buffer, double (*f) (double)){
+__global__ void calculate(double start, double step, int div, double (*f) (double), char *buffer){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if(i < div){
+	if((double) i < div){
 		double x = start + i * step;
 		buffer[i] = f(x);
 	}
 }
 
 double integrate(double start, double end, int div, double (*f) (double)){
+	int N = div;
 	double step = (end - start) / div;
-	double result = (f(start) + f(end)) / 2;
 
 	char *buffer;
-	cudaMallocManaged(&buffer, sizeof(int) * div);
-	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, f);
+	cudaMallocManaged(&buffer, sizeof(int) * N);
+	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(start, step, N, f, buffer);
 
-	for(int i = 0; i < div; i++)
+	double result = (f(start) + f(end)) / 2;
+	for(int i = 0; i < N; i++)
 		result += buffer[i]; // f(start + i * step);
+	return result;
 }
 
 double f(double x){
@@ -31,7 +33,7 @@ double f(double x){
 int main(void){
 	cudaError_t err = cudaSuccess;
 
-	integrate(0, 10, 0.1, f);
+	double result = integrate(0, 10, 0.1, f);
 	
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
@@ -40,9 +42,7 @@ int main(void){
 
 	cudaDeviceSynchronize();
 
-	for(int i = 0; i < N; i++)
-		printf("%d ", buffer[i]);
-	printf("\n");
+	printf("Result: %d\n", result);
 	
 	cudaFree(buffer);
 	
