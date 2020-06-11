@@ -13,8 +13,10 @@ __global__ void calculate(char *buffer, double start, double step, int N, double
 	}
 }
 
-__global__ void f(double *x){
-	x = x*x;
+__global__ void f(double *_x){
+	double x = *_x;
+	double y = x * x;
+	*_x = y;
 }
 
 double integrate(char *buffer, double start, double end, int div, double (*f) (double)){
