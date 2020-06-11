@@ -4,12 +4,6 @@
 
 #define THREADS_PER_BLOCK 3
 
-__global__ void F(double *_x){
-	double x = *_x;
-	double y = x * x;
-	*_x = y;
-}
-
 double f(double x){
 	return x*x;
 }
@@ -18,8 +12,7 @@ __global__ void calculate(char *buffer, double start, double step, int N, double
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N){
 		double x = start + i * step;
-		F(&x);
-		buffer[i] = x;
+		buffer[i] = f(x);
 	}
 }
 
