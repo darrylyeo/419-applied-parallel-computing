@@ -12,6 +12,7 @@ __global__ void calculate(char *buffer, double start, double step, int N, double
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N){
 		double x = start + i * step;
+		printf("%d, %d\n", (int) x, i);
 		buffer[i] = f(x);
 	}
 }
