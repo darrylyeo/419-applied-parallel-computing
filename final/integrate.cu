@@ -4,21 +4,20 @@
 
 #define THREADS_PER_BLOCK 3
 
-__global__ void calculate(double start, double step, int div, double (*f) (double), char *buffer){
+__global__ void calculate(char *buffer, double start, double step, int N, double (*f) (double)){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if((double) i < div){
+	if((double) i < N){
 		double x = start + i * step;
 		buffer[i] = f(x);
 	}
 }
 
-double integrate(double start, double end, int div, double (*f) (double)){
+double integrate(char *buffer, double start, double end, int div, double (*f) (double)){
 	int N = div;
 	double step = (end - start) / div;
 
-	char *buffer;
 	cudaMallocManaged(&buffer, sizeof(int) * N);
-	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(start, step, N, f, buffer);
+	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, start, step, N, f);
 
 	double result = (f(start) + f(end)) / 2;
 	for(int i = 0; i < N; i++)
@@ -32,6 +31,8 @@ double f(double x){
 
 int main(void){
 	cudaError_t err = cudaSuccess;
+
+	char *buffer;
 
 	double result = integrate(0, 10, 0.1, f);
 	
