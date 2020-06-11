@@ -10,11 +10,15 @@ __global__ void F(double *_x){
 	*_x = y;
 }
 
+double f(double x){
+	return x*x;
+}
+
 __global__ void calculate(char *buffer, double start, double step, int N, double (*f) (double)){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N){
 		double x = start + i * step;
-		F(&x)
+		F(&x);
 		buffer[i] = x;
 	}
 }
