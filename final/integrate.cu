@@ -6,10 +6,14 @@
 
 __global__ void calculate(char *buffer, double start, double step, int N, double (*f) (double)){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if((double) i < N){
+	if(i < N){
 		double x = start + i * step;
 		buffer[i] = f(x);
 	}
+}
+
+__global__ double f(double x){
+	return x*x;
 }
 
 double integrate(char *buffer, double start, double end, int div, double (*f) (double)){
@@ -23,10 +27,6 @@ double integrate(char *buffer, double start, double end, int div, double (*f) (d
 	for(int i = 0; i < N; i++)
 		result += buffer[i]; // f(start + i * step);
 	return result;
-}
-
-double f(double x){
-	return x*x;
 }
 
 int main(void){
