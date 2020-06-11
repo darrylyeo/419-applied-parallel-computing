@@ -16,7 +16,7 @@ double integrate(char *buffer, double start, double end, int div, double (*f) (d
 	unsigned long N = (unsigned long) div;
 	double step = (end - start) / div;
 
-	cudaMallocManaged(buffer, sizeof(int) * N);
+	cudaMallocManaged(buffer, (unsigned long) sizeof(int) * N);
 	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, start, step, N, f);
 
 	double result = (f(start) + f(end)) / 2;
