@@ -24,6 +24,8 @@ double integrate(double *buffer, double start, double end, int div, double (*f) 
 	cudaMallocManaged(&buffer, sizeof(double) * N);
 	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, start, step, N, f);
 
+	cudaDeviceSynchronize();
+
 	double result = (f(start) + f(end)) / 2;
 	for(int i = 0; i < N; i++)
 		result += buffer[i]; // f(start + i * step);
@@ -41,8 +43,6 @@ int main(void){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
 		exit(EXIT_FAILURE);
 	}
-
-	cudaDeviceSynchronize();
 
 	printf("Result: %d\n", result);
 	
