@@ -12,7 +12,6 @@ __global__ void calculate(double *buffer, double start, double step, int N, doub
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N){
 		double x = start + i * step;
-		printf("%d, %d\n", x, i);
 		buffer[i] = f(x);
 	}
 }
@@ -25,6 +24,10 @@ double integrate(double *buffer, double start, double end, int div, double (*f) 
 	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, start, step, N, f);
 
 	cudaDeviceSynchronize();
+
+	for(int i = 0; i < N; i++)
+		printf("%d ", buffer[i]);
+	printf("\n");
 
 	double result = (f(start) + f(end)) / 2;
 	for(int i = 0; i < N; i++)
@@ -45,7 +48,7 @@ int main(void){
 	}
 
 	printf("Result: %d\n", result);
-	
+
 	cudaFree(buffer);
 	
 	return 0;
