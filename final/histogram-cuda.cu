@@ -19,10 +19,10 @@ int main(void){
 	cudaMallocManaged(&buffer, size); // Use `buffer` on the CPU and/or on any GPU in the accelerated system.
 
 	int *frequencies;
-	cudaMallocManaged(&frequencies, 90);
+	cudaMallocManaged(&frequencies, 128);
 
 	for(int i = 0; i < N; i++)
-		buffer[i] = 32 + rand() % 60;
+		buffer[i] = 32 + rand() % 90;
 
 	histogram<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, frequencies);
 
@@ -33,7 +33,7 @@ int main(void){
 
 	cudaDeviceSynchronize();
 
-	for(int i = 32; i < 92; i++)
+	for(int i = 32; i < 128; i++)
 		printf("%c: %d\n", i, frequencies[i]);
 
 	cudaFree(buffer);
