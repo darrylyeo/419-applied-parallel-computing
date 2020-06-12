@@ -12,7 +12,7 @@ __global__ void calculate(char *buffer, double start, double step, int N, double
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N){
 		double x = start + i * step;
-		printf("%d, %d\n", (int) x, i);
+		printf("%d, %d\n", x, i);
 		buffer[i] = f(x);
 	}
 }
@@ -36,7 +36,7 @@ int main(void){
 	char *buffer = NULL;
 
 	double result = integrate(buffer, 0, 10, 100, f);
-	
+
 	if ((err = cudaGetLastError()) != cudaSuccess){
 		fprintf(stderr, "Failed to launch kernel: %s\n", cudaGetErrorString(err));
 		exit(EXIT_FAILURE);
