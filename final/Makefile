@@ -14,11 +14,11 @@ histogram-cuda: histogram-cuda.cu
 
 nvprof-histogram-cuda: histogram-cuda
 	/usr/local/cuda-9.0/bin/nvprof ./integrate
-	
+
 
 histogram-openmp: histogram-openmp.c
 	gcc -Wall -ansi -g -openmp -o histogram-openmp histogram-openmp.c
 
 
-histogram-pthread: histogram-pthread.c
-	gcc -Wall -ansi -g -pthread -o histogram-pthread histogram-pthread.c
+histogram-pthreads: histogram-pthreads.c
+	gcc -Wall -ansi -g -pthread -o histogram-pthreads histogram-pthreads.c
