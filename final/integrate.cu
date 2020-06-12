@@ -50,6 +50,6 @@ int main(void){
 	printf("Result: %d\n", result);
 
 	cudaFree(buffer);
-	
+
 	return 0;
 }

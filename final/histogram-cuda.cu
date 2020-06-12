@@ -8,7 +8,7 @@
 __global__ void histogram(char *buffer, int *frequencies){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N)
-		frequencies[buffer[i]]++;
+		frequencies[(int) buffer[i]]++;
 }
 
 int main(void){

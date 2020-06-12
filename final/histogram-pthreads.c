@@ -16,7 +16,7 @@ int threadNum = 0;
 void *histogram(void *arg){
 	int i;
 	for(i = threadNum * N / NUM_THREADS; i < (threadNum + 1) * N / NUM_THREADS; i++)
-		frequencies[buffer[i]]++;
+		frequencies[(int) buffer[i]]++;
 
 	threadNum++;
 
