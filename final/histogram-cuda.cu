@@ -5,7 +5,7 @@
 #define N 20
 #define THREADS_PER_BLOCK 3
 
-__global__ void histogram(char *buffer, char *frequencies){
+__global__ void histogram(char *buffer, int *frequencies){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N)
 		frequencies[char[i]]++;
