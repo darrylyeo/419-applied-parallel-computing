@@ -2,8 +2,8 @@
 #include <cuda_runtime.h>
 // #include <helper_cuda.h>
 
-#define N 20
-#define THREADS_PER_BLOCK 3
+#define N 1000
+#define THREADS_PER_BLOCK 10
 
 __global__ void histogram(char *buffer, int *frequencies){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
