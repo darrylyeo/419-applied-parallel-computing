@@ -22,7 +22,7 @@ int main(void){
 	cudaMallocManaged(&frequencies, 90);
 
 	for(int i = 0; i < N; i++)
-		buffer[i] = 32 + rand() % 58;
+		buffer[i] = 32 + rand() % 60;
 
 	histogram<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, frequencies);
 
@@ -33,7 +33,7 @@ int main(void){
 
 	cudaDeviceSynchronize();
 
-	for(int i = 32; i < 90; i++)
+	for(int i = 32; i < 92; i++)
 		printf("%c: %d\n", i, frequencies[i]);
 
 	cudaFree(buffer);
