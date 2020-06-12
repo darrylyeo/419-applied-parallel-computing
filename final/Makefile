@@ -1,5 +1,5 @@
 clean:
-	rm integrate histogram-cuda histogram-openmp histogram-pthread
+	rm integrate histogram-cuda histogram-openmp histogram-pthreads
 
 
 integrate: integrate.cu
