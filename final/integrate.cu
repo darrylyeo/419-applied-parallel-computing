@@ -8,7 +8,7 @@ double f(double x){
 	return x*x;
 }
 
-__global__ void calculate(char *buffer, double start, double step, int N, double (*f) (double)){
+__global__ void calculate(double *buffer, double start, double step, int N, double (*f) (double)){
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if(i < N){
 		double x = start + i * step;
@@ -17,11 +17,11 @@ __global__ void calculate(char *buffer, double start, double step, int N, double
 	}
 }
 
-double integrate(char *buffer, double start, double end, int div, double (*f) (double)){
+double integrate(double *buffer, double start, double end, int div, double (*f) (double)){
 	int N = div;
 	double step = (end - start) / div;
 
-	cudaMallocManaged(&buffer, sizeof(int) * N);
+	cudaMallocManaged(&buffer, sizeof(double) * N);
 	calculate<<<(N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(buffer, start, step, N, f);
 
 	double result = (f(start) + f(end)) / 2;
@@ -33,7 +33,7 @@ double integrate(char *buffer, double start, double end, int div, double (*f) (d
 int main(void){
 	cudaError_t err = cudaSuccess;
 
-	char *buffer = NULL;
+	double *buffer = NULL;
 
 	double result = integrate(buffer, 0, 10, 100, f);
 
